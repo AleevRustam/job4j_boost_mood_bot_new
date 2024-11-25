@@ -14,7 +14,7 @@ public class MoodBotApplication {
         SpringApplication.run(MoodBotApplication.class, args);
     }
 
-    @Bean
+    @Bean("commandLineRunnerMoodBotApplication")
     public CommandLineRunner commandLineRunner(ApplicationContext ctx) {
       return args -> {
           AppConfig appConfig = ctx.getBean(AppConfig.class);
