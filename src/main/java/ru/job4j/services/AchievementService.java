@@ -2,10 +2,13 @@ package ru.job4j.services;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AchievementService {
+public class AchievementService implements BeanNameAware {
+
+    private String beanName;
 
     @PostConstruct
     public void init() {
@@ -15,5 +18,11 @@ public class AchievementService {
     @PreDestroy
     public void destroy() {
         System.out.println("Bean will be destroyed via @PreDestroy.");
+    }
+
+    @Override
+    public void setBeanName(String beanName) {
+        this.beanName = beanName;
+        System.out.println("Bean beanName from BeanNameAware: " + this.beanName);
     }
 }
