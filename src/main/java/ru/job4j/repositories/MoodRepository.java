@@ -2,11 +2,11 @@ package ru.job4j.repositories;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
-import ru.job4j.model.Achievement;
+import ru.job4j.model.Mood;
 
 import java.util.List;
 
 @Repository
-public interface AchievementRepository extends CrudRepository<Achievement, Long> {
-    List<Achievement> findAll();
+public interface MoodRepository extends CrudRepository<Mood, Long> {
+    List<Mood> findAll();
 }
