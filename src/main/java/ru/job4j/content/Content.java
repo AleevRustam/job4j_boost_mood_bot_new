@@ -46,6 +46,10 @@ public class Content {
         return audio;
     }
 
+    public InputFile getAudio() {
+        return audio;
+    }
+
     public void setAudio(InputFile audio) {
         this.audio = audio;
     }

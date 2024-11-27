@@ -123,18 +123,18 @@ public class TgRemoteService extends TelegramLongPollingBot {
             if ("/start".equals(message.getText())) {
                 long chatId = message.getChatId();
                 var response = messageHandler.handleStartMessage(chatId, message.getFrom().getId());
-                send(response);
+                sent(response);
             }
         } else if (update.hasCallbackQuery()) {
             var callbackQuery = update.getCallbackQuery();
             String moodKey = callbackQuery.getData();
             long chatId = callbackQuery.getMessage().getChatId();
             var response = messageHandler.handleMoodResponse(chatId, moodKey);
-            send(response);
+            sent(response);
         }
     }
 
-    void send(SendMessage message) {
+    void sent(SendMessage message) {
         try {
             execute(message);
         } catch (TelegramApiException e) {
