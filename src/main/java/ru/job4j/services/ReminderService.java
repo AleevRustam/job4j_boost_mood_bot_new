@@ -6,7 +6,10 @@ import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.job4j.content.Content;
-import ru.job4j.repositories.UserRepository;
+import ru.job4j.repositories.MoodLogRepository;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
 
 @Service
 public class ReminderService implements BeanNameAware {
@@ -29,26 +32,34 @@ public class ReminderService implements BeanNameAware {
         System.out.println("Bean beanName from BeanNameAware: " + this.beanName);
     }
 
-   // private final TgRemoteService tgRemoteService;
-    private final TelegramBotService tgRemoteService;
-    private final UserRepository userRepository;
+    private final SentContent sentContent;
+    private final MoodLogRepository moodLogRepository;
+    private final TgUI tgUI;
 
-    public ReminderService(TelegramBotService tgRemoteService, UserRepository userRepository) {
-        this.tgRemoteService = tgRemoteService;
-        this.userRepository = userRepository;
+    public ReminderService(SentContent sentContent,
+                           MoodLogRepository moodLogRepository, TgUI tgUI) {
+        this.sentContent = sentContent;
+        this.moodLogRepository = moodLogRepository;
+        this.tgUI = tgUI;
     }
 
-    @Scheduled(fixedRateString = "${remind.period}")
-    public void ping() {
-        for (var user : userRepository.findAll()) {
-            /*var message = new SendMessage();
-            message.setChatId(user.getChatId());
-            message.setText("Ping");
-            tgRemoteService.sent(message);*/
+    @Scheduled(fixedRateString = "${recommendation.alert.period}")
+    public void remindUsers() {
+        var startOfDay = LocalDate.now()
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli();
+        var endOfDay = LocalDate.now()
+                .plusDays(1)
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli() - 1;
 
+        for (var user : moodLogRepository.findUsersWhoDidNotVoteToday(startOfDay, endOfDay)) {
             var content = new Content(user.getChatId());
-            content.setText("Ping");
-            tgRemoteService.sent(content);
+            content.setText("Как настроение?");
+            content.setMarkup(tgUI.buildButtons());
+            sentContent.sent(content);
         }
     }
 }
